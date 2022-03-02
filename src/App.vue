@@ -8,11 +8,16 @@
       <p>See the README file for assignment requirements.</p>
 
       <div class="cm-list-container">
-        <PremiumRecipeCard
-          v-for="premiumRecipe in premiumRecipes"
-          :key="premiumRecipe.id"
-          v-bind:recipe="premiumRecipe"
-        />
+        <div v-if="premiumRecipes.length">
+          <PremiumRecipeCard
+            v-for="premiumRecipe in premiumRecipes"
+            :key="premiumRecipe.id"
+            v-bind:recipe="premiumRecipe"
+          />
+        </div>
+        <div class="no-recipe-found" v-else>
+          Oops.. something went wrong. Try again please
+        </div>
       </div>
     </div>
   </div>
@@ -34,25 +39,33 @@ export default {
   }),
 
   mounted() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        const filtered = result.filter(recipe => recipe.isPremium);
-
-        this.premiumRecipes = filtered.map(recipe => {
-          return {
-            id: recipe.id,
-            title: recipe.title,
-            images: recipe.images,
-            rating: recipe.rating,
-            preparationTime: recipe.preparationTimeMinutes,
-            energy: recipe.details.energy,
-            nutrients: recipe.details.nutrients
-          };
-        });
-      });
+    this.getPremiumRecipes();
   },
-  methods: {}
+  methods: {
+    getPremiumRecipes() {
+      fetch(API_URL)
+        .then(response => response.json())
+        .then(result => {
+          const filtered = result.filter(recipe => recipe.isPremium);
+
+          this.premiumRecipes = filtered.map(recipe => {
+            return {
+              id: recipe.id,
+              title: recipe.title,
+              images: recipe.images,
+              rating: recipe.rating,
+              preparationTime: recipe.preparationTimeMinutes,
+              energy: recipe.details.energy,
+              nutrients: recipe.details.nutrients
+            };
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          this.premiumRecipes = [];
+        });
+    }
+  }
 };
 </script>
 
@@ -67,7 +80,7 @@ export default {
 }
 </style>
 
-<style scoped>
+<style>
 .cm-logo-wrapper {
   margin-bottom: 30px;
 }
@@ -84,5 +97,20 @@ export default {
 
 .cm-list-container {
   text-align: center;
+}
+
+span {
+  display: inline-block;
+}
+
+.text-holder {
+  line-height: 20px;
+  font-size: 12px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+svg {
+  margin-left: 5px;
 }
 </style>
