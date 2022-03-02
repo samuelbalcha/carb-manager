@@ -13,6 +13,7 @@
             v-for="premiumRecipe in premiumRecipes"
             :key="premiumRecipe.id"
             v-bind:recipe="premiumRecipe"
+            v-bind:userSelectedEnergyUnit="userProfile.energyUnits"
           />
         </div>
         <div class="no-recipe-found" v-else>
@@ -25,7 +26,7 @@
 
 <script>
 import PremiumRecipeCard from "./components/PremiumRecipeCard.vue";
-const API_URL = "http://localhost:3000/recipes";
+const BASE_URL = "http://localhost:3000";
 
 export default {
   name: "App",
@@ -35,15 +36,21 @@ export default {
   },
 
   data: () => ({
-    premiumRecipes: []
+    premiumRecipes: [],
+    userProfile: {
+      firstName: "",
+      lastName: "",
+      energyUnits: ""
+    }
   }),
 
   mounted() {
     this.getPremiumRecipes();
+    this.getProfile();
   },
   methods: {
     getPremiumRecipes() {
-      fetch(API_URL)
+      fetch(`${BASE_URL}/recipes`)
         .then(response => response.json())
         .then(result => {
           const filtered = result.filter(recipe => recipe.isPremium);
@@ -56,13 +63,25 @@ export default {
               rating: recipe.rating,
               preparationTime: recipe.preparationTimeMinutes,
               energy: recipe.details.energy,
+              energyUnit: recipe.details.units.energy,
               nutrients: recipe.details.nutrients
             };
           });
         })
         .catch(err => {
-          console.error(err);
+          console.error(`getPremiumRecipes error: ${err}`);
           this.premiumRecipes = [];
+        });
+    },
+    getProfile() {
+      fetch(`${BASE_URL}/user`)
+        .then(response => response.json())
+        .then(result => {
+          this.userProfile = result;
+        })
+        .catch(err => {
+          console.error(`getProfile error: ${err}`);
+          this.userProfile = {};
         });
     }
   }

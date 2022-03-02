@@ -63,6 +63,5 @@ describe("PremiumRecipeCard.vue", () => {
     );
 
     expect(timeToCookAndEnergyBadge).not.toBeNull();
-    expect(wrapper.html()).toContain("Calories");
   });
 });

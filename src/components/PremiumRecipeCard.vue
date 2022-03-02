@@ -43,6 +43,8 @@
       <TimeToCookAndEnergyBadge
         :preparationTime="recipe.preparationTime"
         :energy="recipe.energy"
+        :energyUnit="recipe.energyUnit"
+        :userSelectedUnit="userSelectedEnergyUnit"
       />
 
       <NutrientsBadge
@@ -84,12 +86,14 @@ export default {
       },
       preparationTime: Number,
       energy: Number,
+      energyUnit: String,
       nutrients: {
         proteins: Number,
         carbs: Number,
         fats: Number
       }
     },
+    userSelectedEnergyUnit: String,
     isCardClicked: Boolean
   },
   components: {
