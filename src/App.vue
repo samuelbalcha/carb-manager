@@ -7,17 +7,20 @@
       <h2>Carb Manager Dev Assignment</h2>
       <p>See the README file for assignment requirements.</p>
 
-      <ul>
-        <li v-for="recipe in recipes" :key="recipe" class="premium-recipe">
-          <PremiumRecipeCard :id="recipe" />
-        </li>
-      </ul>
+      <div class="cm-list-container">
+        <PremiumRecipeCard
+          v-for="premiumRecipe in premiumRecipes"
+          :key="premiumRecipe.id"
+          v-bind:recipe="premiumRecipe"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import PremiumRecipeCard from "./components/PremiumRecipeCard.vue";
+const API_URL = "http://localhost:3000/recipes";
 
 export default {
   name: "App",
@@ -27,8 +30,29 @@ export default {
   },
 
   data: () => ({
-    recipes: ["Premium", "recipes", "list", "goes", "here"]
-  })
+    premiumRecipes: []
+  }),
+
+  mounted() {
+    fetch(API_URL)
+      .then(response => response.json())
+      .then(result => {
+        const filtered = result.filter(recipe => recipe.isPremium);
+
+        this.premiumRecipes = filtered.map(recipe => {
+          return {
+            id: recipe.id,
+            title: recipe.title,
+            images: recipe.images,
+            rating: recipe.rating,
+            preparationTime: recipe.preparationTimeMinutes,
+            energy: recipe.details.energy,
+            nutrients: recipe.details.nutrients
+          };
+        });
+      });
+  },
+  methods: {}
 };
 </script>
 
@@ -58,11 +82,7 @@ export default {
   margin: auto;
 }
 
-/** Remove these styles when done */
-.premium-recipe {
-  margin-top: 24px;
-  border: 2px dashed red;
-  padding: 16px;
-  list-style: none;
+.cm-list-container {
+  text-align: center;
 }
 </style>
