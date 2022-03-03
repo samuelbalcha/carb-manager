@@ -28,6 +28,7 @@
       />
 
       <NutrientsBadge
+        class="nutrients-badge"
         :proteins="recipe.nutrients.proteins"
         :fats="recipe.nutrients.fats"
         :carbs="recipe.nutrients.carbs"
@@ -174,5 +175,9 @@ img {
   font-size: 14px;
   line-height: 30px;
   color: #1ca677;
+}
+
+.nutrients-badge {
+  margin-left: 15px;
 }
 </style>
