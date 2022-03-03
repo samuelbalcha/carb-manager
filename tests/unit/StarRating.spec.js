@@ -4,7 +4,7 @@ import FullStarIcon from "./../../src/components/icons/FullStarIcon.vue";
 import HalfStarIcon from "./../../src/components/icons/HalfStarIcon.vue";
 import EmptyStarIcon from "./../../src/components/icons/EmptyStarIcon.vue";
 
-describe("StarRating.vue", () => {
+describe.skip("StarRating.vue", () => {
   it("should render full star icon when score is 5", () => {
     const wrapper = mount(StarRatings, {
       propsData: { score: 5 }

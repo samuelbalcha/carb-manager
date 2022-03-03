@@ -147,9 +147,10 @@ img {
   left: 5px;
   width: 117px;
   height: 20px;
-  background: #ffffff;
+  background: rgba(156, 141, 141, 0.8);
   opacity: 0.3;
   border-radius: 10px;
+  margin-left: 5px;
 }
 
 .caption {
@@ -158,6 +159,8 @@ img {
   line-height: 12px;
   letter-spacing: -0.2px;
   color: #ffffff;
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .heart {
