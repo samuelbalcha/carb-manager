@@ -7,17 +7,26 @@
       <h2>Carb Manager Dev Assignment</h2>
       <p>See the README file for assignment requirements.</p>
 
-      <ul>
-        <li v-for="recipe in recipes" :key="recipe" class="premium-recipe">
-          <PremiumRecipeCard :id="recipe" />
-        </li>
-      </ul>
+      <div class="cm-list-container">
+        <div v-if="premiumRecipes.length">
+          <PremiumRecipeCard
+            v-for="premiumRecipe in premiumRecipes"
+            :key="premiumRecipe.id"
+            v-bind:recipe="premiumRecipe"
+            v-bind:userSelectedEnergyUnit="userProfile.energyUnits"
+          />
+        </div>
+        <div class="no-recipe-found" v-else>
+          Oops.. something went wrong. Try again please
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import PremiumRecipeCard from "./components/PremiumRecipeCard.vue";
+const BASE_URL = "http://localhost:3000";
 
 export default {
   name: "App",
@@ -27,8 +36,55 @@ export default {
   },
 
   data: () => ({
-    recipes: ["Premium", "recipes", "list", "goes", "here"]
-  })
+    premiumRecipes: [],
+    userProfile: {
+      firstName: "",
+      lastName: "",
+      energyUnits: ""
+    }
+  }),
+
+  mounted() {
+    this.getPremiumRecipes();
+    this.getProfile();
+  },
+  methods: {
+    getPremiumRecipes() {
+      fetch(`${BASE_URL}/recipes`)
+        .then(response => response.json())
+        .then(result => {
+          const filtered = result.filter(recipe => recipe.isPremium);
+
+          this.premiumRecipes = filtered.map(recipe => {
+            return {
+              id: recipe.id,
+              title: recipe.title,
+              images: recipe.images,
+              rating: recipe.rating,
+              preparationTime: recipe.preparationTimeMinutes,
+              energy: recipe.details.energy,
+              energyUnit: recipe.details.units.energy,
+              nutrients: recipe.details.nutrients
+            };
+          });
+        })
+        .catch(err => {
+          console.error(`getPremiumRecipes error: ${err}`);
+          this.premiumRecipes = [];
+        });
+    },
+    getProfile() {
+      fetch(`${BASE_URL}/user`)
+        .then(response => response.json())
+        .then(result => {
+          this.userProfile = result;
+        })
+        .catch(err => {
+          console.error(`getProfile error: ${err}`);
+          this.userProfile = {};
+        });
+    }
+  }
 };
 </script>
 
@@ -43,7 +99,7 @@ export default {
 }
 </style>
 
-<style scoped>
+<style>
 .cm-logo-wrapper {
   margin-bottom: 30px;
 }
@@ -58,11 +114,22 @@ export default {
   margin: auto;
 }
 
-/** Remove these styles when done */
-.premium-recipe {
-  margin-top: 24px;
-  border: 2px dashed red;
-  padding: 16px;
-  list-style: none;
+.cm-list-container {
+  text-align: center;
+}
+
+span {
+  display: inline-block;
+}
+
+.text-holder {
+  line-height: 20px;
+  font-size: 12px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+svg {
+  margin-left: 5px;
 }
 </style>
